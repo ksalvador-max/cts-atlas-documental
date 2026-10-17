@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Atlas documental CTS Compostela</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: dossier técnico — cabecera con resumen por servicio, mapa mental desplegable y matriz agrupada por servicio */
+:root{
+  --bg:#f7f5f4; --surface:#ffffff; --ink:#24191c; --muted:#6f6266; --line:#e3dcdd; --soft:#efeaea;
+  --accent:#7B1D3A; --gold:#C8956A;
+  --c:#4d6178; --s1:#7B1D3A; --s2:#b07436; --s3:#1f7a74;
+  --c-bg:#e8edf2; --s1-bg:#f4e4e9; --s2-bg:#f6ebdf; --s3-bg:#e0f0ee;
+  --hi:#fff4d6;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17121a; --surface:#211a22; --ink:#f1e9ec; --muted:#ab9ca2; --line:#3a2f36; --soft:#2a2129;
+  --accent:#e0768f; --gold:#d8a97f;
+  --c:#9db3cb; --s1:#e0768f; --s2:#e0a868; --s3:#5fc4bb;
+  --c-bg:#243041; --s1-bg:#3d2230; --s2-bg:#3b2d1e; --s3-bg:#17332f; --hi:#3d3420; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17121a; --surface:#211a22; --ink:#f1e9ec; --muted:#ab9ca2; --line:#3a2f36; --soft:#2a2129;
+  --accent:#e0768f; --gold:#d8a97f;
+  --c:#9db3cb; --s1:#e0768f; --s2:#e0a868; --s3:#5fc4bb;
+  --c-bg:#243041; --s1-bg:#3d2230; --s2-bg:#3b2d1e; --s3-bg:#17332f; --hi:#3d3420; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px;display:grid;gap:28px}
+h1,h2{font-family:var(--f-display);font-stretch:82%;letter-spacing:-.01em;margin:0;text-wrap:balance}
+h1{font-size:clamp(28px,4vw,40px);font-weight:800}
+h2{font-size:22px;font-weight:700}
+.eyebrow{font-family:var(--f-mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+header{display:grid;gap:10px}
+header p{margin:0;color:var(--muted);max-width:70ch}
+.svcs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.svc.tv{border-top-style:dashed}
+@media(max-width:800px){.svcs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.svc{all:unset;cursor:pointer;display:grid;gap:4px;padding:14px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--k);min-width:0}
+.svc:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.svc[aria-pressed="true"]{background:var(--kb)}
+.svc .code{font-family:var(--f-mono);font-size:12px;color:var(--k);font-weight:500}
+.svc .name{font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:17px;line-height:1.15}
+.svc .meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+section{display:grid;gap:12px}
+.sechead{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px}
+.hint{font-size:13px;color:var(--muted)}
+.mapbox{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow-x:auto}
+#map{display:block}
+#map text{font-family:var(--f-body);fill:var(--ink)}
+#map .node{cursor:pointer}
+#map .node:focus-visible rect{stroke:var(--accent);stroke-width:2}
+.btn{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:5px 10px;border-radius:6px;cursor:pointer}
+.btn:hover{border-color:var(--muted)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.controls input[type=search]{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink);min-width:0;flex:1 1 240px}
+.controls select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink)}
+.controls label{display:flex;gap:6px;align-items:center;font-size:14px}
+.count{font-family:var(--f-mono);font-size:12.5px;color:var(--muted)}
+.tablebox{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:980px}
+th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--line)}
+th{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--soft);position:sticky;top:0}
+td{font-size:14px}
+tr.svcrow td{background:var(--kb);font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:17px;color:var(--ink);border-left:5px solid var(--k)}
+tr.grprow td{font-weight:600;font-size:13px;color:var(--muted);background:var(--surface);padding-top:12px}
+tr.grprow button{all:unset;cursor:pointer;display:flex;gap:6px;align-items:center}
+tr.grprow button:focus-visible{outline:2px solid var(--accent)}
+tr.doc{cursor:pointer}
+tr.doc:hover td{background:var(--soft)}
+tr.doc.flash td{background:var(--hi)}
+.dname{font-weight:600;overflow-wrap:anywhere}
+.dtype{font-family:var(--f-mono);font-size:11.5px;color:var(--muted);margin-top:2px}
+.rel{display:flex;gap:4px}
+.r{width:26px;height:22px;border-radius:4px;display:grid;place-items:center;font-family:var(--f-mono);font-size:11px;font-weight:500}
+.r.A{background:var(--k);color:var(--surface)}
+.r.M{background:var(--kb);color:var(--k);border:1px solid var(--k)}
+.r.B{color:var(--muted);border:1px dashed var(--line)}
+.r.n{color:var(--line)}
+.pr{font-family:var(--f-mono);font-size:12px;padding:2px 7px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+.pr.p1{background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.pr.p2{border-color:var(--gold);color:var(--ink)}
+a.open{color:var(--accent);font-weight:600;white-space:nowrap;text-decoration:none;border-bottom:1px solid currentColor}
+a.open:focus-visible{outline:2px solid var(--accent)}
+.proj{font-size:12.5px;color:var(--muted)}
+tr.detail td{background:var(--soft);font-size:14px;padding:10px 14px 14px}
+tr.detail .lbl{font-family:var(--f-mono);font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:2px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);align-items:center}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.tr{font-family:var(--f-mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;padding:2px 6px;border-radius:4px;border:1px dashed var(--muted);color:var(--muted);white-space:nowrap}
+.who{display:grid;gap:4px;justify-items:start}
+.who .own{font-size:12.5px;font-weight:600;color:var(--k)}
+.who .ref{font-size:12.5px;color:var(--muted)}
+tr.doc.ref .dname{font-weight:500;color:var(--muted)}
+.empty{padding:28px;text-align:center;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){tr.doc.flash td{transition:background .8s}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FONATUR · CTS Compostela · Diagnóstico · corte 17 oct. 2026</div>
+    <h1>Atlas documental CTS Compostela</h1>
+    <p>Los 108 documentos disponibles para el diagnóstico (104 de la carpeta de Drive de FONATUR y 4 documentos previos del PMC), agrupados en cada servicio al que nutren. Los documentos transversales aparecen en varios servicios, pero cada uno tiene asignada una sola lectura para que el equipo no lo lea dos veces.</p>
+  </header>
+
+  <div class="svcs" id="svcs"></div>
+
+  <section aria-labelledby="h-map">
+    <div class="sechead">
+      <h2 id="h-map">Mapa mental</h2>
+      <div class="controls">
+        <button class="btn" id="expandAll" type="button">Desplegar todo</button>
+        <button class="btn" id="collapseAll" type="button">Plegar</button>
+      </div>
+    </div>
+    <div class="hint">Pulsa un servicio o un grupo para desplegarlo y filtrar la matriz; pulsa un documento para ver su ficha.</div>
+    <div class="mapbox"><svg id="map" role="img" aria-label="Mapa mental de la documentación por servicio"></svg></div>
+  </section>
+
+  <section aria-labelledby="h-mat">
+    <div class="sechead">
+      <h2 id="h-mat">Matriz de documentos</h2>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="controls">
+      <input type="search" id="q" placeholder="Buscar por nombre, descripción o alcance" aria-label="Buscar">
+      <select id="fsvc" aria-label="Servicio">
+        <option value="all">Todos los servicios</option>
+        <option value="S1">S1 · Estrategia turística</option>
+        <option value="S2">S2 · Portafolio y posicionamiento</option>
+        <option value="S3">S3 · Proyectos estratégicos</option>
+      </select>
+      <select id="fpr" aria-label="Prioridad de lectura">
+        <option value="all">Cualquier prioridad</option>
+        <option value="1">Prioridad 1</option>
+        <option value="12">Prioridad 1 y 2</option>
+      </select>
+      <label><input type="checkbox" id="ftrans"> Solo transversales</label><label><input type="checkbox" id="fmine"> Solo los que lee este servicio</label>
+      <label><input type="checkbox" id="fcarto"> Mostrar cartografía SIG/CAD</label>
+    </div>
+    <div class="legend">
+      <span>Relevancia por servicio:</span>
+      <span><span class="r A" style="--k:var(--ink);--kb:var(--soft)">A</span>alta</span>
+      <span><span class="r M" style="--k:var(--ink);--kb:var(--soft)">M</span>media</span>
+      <span><span class="r B">B</span>baja</span>
+      <span><span class="pr p1">1</span>prioridad de lectura</span><span><span class="tr">Transversal</span>aparece en varios servicios; la etiqueta indica quién lo lee</span>
+    </div>
+    <div class="tablebox">
+      <table>
+        <thead><tr><th style="width:23%">Documento</th><th style="width:25%">Descripción</th><th style="width:25%">Alcance</th><th>S1 S2 S3</th><th>Lectura</th><th>Enlace</th></tr></thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<script>
+const DOCS = [{"svc": "C", "grp": "Síntesis y control", "id": "1B4NaOwWXnzc2pFXIYBD8zGp0CX63jBDa", "n": "1.-Presentación CTS COMPOSTELA 081026", "t": "PDF", "sz": 42916914, "rel": "AAA", "pr": 1, "d": "Presentación institucional más reciente del CTS (08/10/2026), 95 láminas.", "a": "Todo el CTS: organización territorial, PMC de ambos PTS, modelo Dona, PMI, modelo financiero (en elaboración), vocaciones y producto turístico.", "x": "Incluye la propuesta de producto «Economía Azul», segmentos sustantivos y de soporte, boceto de marca destino, estado de los instrumentos (PPDU, POTE, ANP Tortugas) y proyectos de terceros (Vidanta, One&Only, SEMAR, Chacalilla).", "url": "https://drive.google.com/file/d/1B4NaOwWXnzc2pFXIYBD8zGp0CX63jBDa/view"}, {"svc": "C", "grp": "Síntesis y control", "id": "19bbU9C60ciws4gt8TkQcGYub9fnc7dFL", "n": "Requerimientos GLOBALDIT oct 2026", "t": "Excel", "sz": 59185, "rel": "MMM", "pr": 1, "d": "Respuesta de FONATUR, punto por punto, a la solicitud de información de globaldit.", "a": "22 requerimientos en 4 bloques (común, S1, S2, S3) con casilla de entrega y observaciones.", "x": "Indica, para cada documento, qué se entrega y en qué archivo.", "url": "https://drive.google.com/file/d/19bbU9C60ciws4gt8TkQcGYub9fnc7dFL/view"}, {"svc": "C", "grp": "Síntesis y control", "id": "1l2EGXyRMx7FfoXOwutRiN93zK717kuNas9A6QTIZ0iw", "n": "SOLICITUD DOCS PARA DIAGNÓSTICO", "t": "Google Doc", "sz": 2746, "rel": "MMM", "pr": 3, "d": "Solicitud de documentación enviada por globaldit para el diagnóstico.", "a": "Lista de referencia de los 22 documentos pedidos, agrupados por servicio.", "x": "Sirve de checklist para contrastar con la hoja de requerimientos.", "url": "https://docs.google.com/document/d/1l2EGXyRMx7FfoXOwutRiN93zK717kuNas9A6QTIZ0iw/edit"}, {"svc": "C", "grp": "Plan Maestro Conceptual", "id": "1iGFkjIQxL7WAgENYFpa5gdmobzgcHpwq", "n": "1.1 NT-SPD-PLAN_TERR_CTS Anexo 1", "t": "PDF", "sz": 2500577, "rel": "AMA", "pr": 1, "d": "Nota informativa de planeación territorial del CTS (2 oct. 2026), 25 págs.", "a": "17.011,97 ha: 2 zonas, 6 destinos turísticos, 3 localidades turísticas, 2 PTS y 16 sectores.", "x": "Capacidad normativa POEL (230.820 u) y PMDU (≈114.500 u); 14 vocaciones de uso de suelo; escenarios de capacidad homogénea, diferenciada y con banco.", "url": "https://drive.google.com/file/d/1iGFkjIQxL7WAgENYFpa5gdmobzgcHpwq/view"}, {"svc": "C", "grp": "Plan Maestro Conceptual", "id": "1tPI6BzyKrl8Zi-IA9tx8QOd4kr3GgAP9", "n": "1.-Presentación DG 21SEP2026_COMPLETA", "t": "PDF", "sz": 28076891, "rel": "MMA", "pr": 3, "d": "Presentación completa del PMC a Dirección General (21/09/2026).", "a": "Visión regional, PTS, modelo Dona, PMC por dimensiones, proyectos detonadores y modelo financiero (capítulo E).", "x": "Versión previa de la presentación de octubre; útil sobre todo por el capítulo de modelo financiero.", "url": "https://drive.google.com/file/d/1tPI6BzyKrl8Zi-IA9tx8QOd4kr3GgAP9/view"}, {"svc": "C", "grp": "Plan Maestro Conceptual", "id": "1DSmyrshddvoi3HBM7hIiaZ9JExpm5cUp", "n": "1.4 Opinión técnica DD_Actualización", "t": "PDF", "sz": 28271210, "rel": "MMA", "pr": 2, "d": "Opinión de resultados de la viabilidad técnica del CTS emitida por la Dirección de Desarrollo, 119 págs.", "a": "Contexto turístico nacional, delimitación de la zona de estudio, criterios regionales y particulares, mesa de especialistas y planteamiento inicial del Plan Maestro.", "x": "Documento de viabilidad técnica de la fase de evaluación que establece el MUS.", "url": "https://drive.google.com/file/d/1DSmyrshddvoi3HBM7hIiaZ9JExpm5cUp/view"}, {"svc": "C", "grp": "Plan Maestro Conceptual", "id": "1J97832eLFeWIF9De-wZvIlpNkiUt9vny", "n": "Paso 1. Estudio IRT", "t": "PDF", "sz": 14504337, "rel": "MAM", "pr": 2, "d": "Estudio de Identificación de Reservas Territoriales de Compostela (nov. 2025).", "a": "Identificación de áreas susceptibles de aprovechamiento turístico y vocaciones de partida.", "x": "Origen del modelo de turismo de naturaleza (sol y playa de bajo impacto, ecoturismo, náutico, comunitario).", "url": "https://drive.google.com/file/d/1J97832eLFeWIF9De-wZvIlpNkiUt9vny/view"}, {"svc": "C", "grp": "Plan Maestro Conceptual", "id": "1UOeOvdzavWBHHRhtgM48Sgvfws7OpqSz", "n": "1.2 y 1.3 Información PMC", "t": "Word", "sz": 274003, "rel": "MMM", "pr": 1, "d": "Oficio de FONATUR (12 oct. 2026) que entrega los numerales 6.1, 6.2 y 6.3 del PMC.", "a": "Diagnóstico y factibilidad preliminar, Planteamiento Inicial del Plan Maestro y Estudio de Mercado.", "x": "Remite a la carpeta institucional de FONATUR donde se alojan los estudios del PMC.", "url": "https://drive.google.com/file/d/1UOeOvdzavWBHHRhtgM48Sgvfws7OpqSz/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "105X0GXMQu2iC7nWuLvHyg3uqjB3d8sZv", "n": "25_PTS-PDARQ-01", "t": "PDF", "sz": 10285034, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: proyectos detonadores de arquitectura.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/105X0GXMQu2iC7nWuLvHyg3uqjB3d8sZv/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1yPV5BPSfhwKT3ClaH9byBWneFa0ZJmjf", "n": "13_PTS-PG-CON-01", "t": "PDF", "sz": 6440849, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: plan general de conectividad de los pts.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1yPV5BPSfhwKT3ClaH9byBWneFa0ZJmjf/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1oyRDMpJ2UbJaUirrgIB34P5kQezEkEpU", "n": "11_PTS-BDCH-ML-01", "t": "PDF", "sz": 4538437, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: macrolotes del pts boca de chila.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1oyRDMpJ2UbJaUirrgIB34P5kQezEkEpU/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1Pc3GM8eC6-d2itaU_i9a-nFrJ89SxF2h", "n": "12_PTS-CHLC-ML-01", "t": "PDF", "sz": 9382064, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: macrolotes del pts chacala-las cuevas.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1Pc3GM8eC6-d2itaU_i9a-nFrJ89SxF2h/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "19JNFUMwmN1oIxyO_Wo7mHO-GFgM373PH", "n": "23_PTS-PMC-03", "t": "PDF", "sz": 6113841, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: plan maestro conceptual, lámina 3.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/19JNFUMwmN1oIxyO_Wo7mHO-GFgM373PH/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1KWUoU_vi_8SQJXCQumBZYo98GOA2UYlF", "n": "22_PTS-PMC-02", "t": "PDF", "sz": 5634844, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: plan maestro conceptual, lámina 2.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1KWUoU_vi_8SQJXCQumBZYo98GOA2UYlF/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1y9eqJ0FnwaptTLU9pmMEHa4ckMJMNBGM", "n": "6_PTS-PG", "t": "PDF", "sz": 6285406, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: plan general de los pts.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1y9eqJ0FnwaptTLU9pmMEHa4ckMJMNBGM/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1Ml-HiZwRWPoeKboKR6HVsvaWQ7pzPoyy", "n": "15_PTS-PG-US-01", "t": "PDF", "sz": 10035581, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: usos de suelo de los pts.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1Ml-HiZwRWPoeKboKR6HVsvaWQ7pzPoyy/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1iLsIcVuO3Pzh3SulVz-ME-0YvXnhfxHA", "n": "22_PTS-CNM-01", "t": "PDF", "sz": 5638969, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: conectividad no motorizada (senderos y ciclovías).", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1iLsIcVuO3Pzh3SulVz-ME-0YvXnhfxHA/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "12wWbnZWSnsvSRPqzrwmhGR4_pjrBdQKJ", "n": "19_PTS-PMH-01", "t": "PDF", "sz": 6824463, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: plan maestro hidrológico.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/12wWbnZWSnsvSRPqzrwmhGR4_pjrBdQKJ/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1S01eDl62DMsoqhGQcXN8KvUHdYuB8bSF", "n": "2_CTS-HID-01", "t": "PDF", "sz": 46817139, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: análisis hidrológico del cts.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1S01eDl62DMsoqhGQcXN8KvUHdYuB8bSF/view"}, {"svc": "C", "grp": "Láminas PMC", "id": "1qHVpvcLR09Qytv0DhrMA8tIKDhPASWTO", "n": "1_CTS-EST-01", "t": "PDF", "sz": 5450841, "rel": "BMA", "pr": 3, "d": "Lámina del PMC: estructura territorial del cts.", "a": "Plano en PDF; consulta gráfica.", "x": "Parte del juego de 12 láminas entregado con el PMC (carpeta 1.1 PMC/PDF).", "url": "https://drive.google.com/file/d/1qHVpvcLR09Qytv0DhrMA8tIKDhPASWTO/view"}, {"svc": "C", "grp": "Tablas PMC (Excel)", "id": "1VmjxSx8lyAbZYNwSbxNmUpaXpaiLjlUP", "n": "RESUMEN_PTS CHACALA-LAS CUEVAS_ACTUALIZADO_01", "t": "Excel", "sz": 44226, "rel": "BMA", "pr": 2, "d": "Tabla normativa del PTS Chacala-Las Cuevas por sector y macrolote.", "a": "9 sectores, usos TH/TR/MC/ET/EQ, densidades base y con banco, COS, CUS, niveles y alturas; 12.005 u con banco.", "x": "Tabla de programa del PTS Chacala-Las Cuevas por sector y macrolote.", "url": "https://drive.google.com/file/d/1VmjxSx8lyAbZYNwSbxNmUpaXpaiLjlUP/view"}, {"svc": "C", "grp": "Tablas PMC (Excel)", "id": "1d_4FiucNNV_pCPUTHQmBJJshDU3fYuVJ", "n": "RESUMEN INTENSIDAD CONSTRUCTIVA", "t": "Excel", "sz": 15992, "rel": "BMA", "pr": 2, "d": "Intensidad constructiva del PTS Boca de Chila por sector.", "a": "7 sectores: superficie aprovechable, cuerpos de agua, COS, desplante, niveles y superficie de construcción.", "x": "Equivale a la tabla de programa de Boca de Chila, pero sin unidades por uso.", "url": "https://drive.google.com/file/d/1d_4FiucNNV_pCPUTHQmBJJshDU3fYuVJ/view"}, {"svc": "C", "grp": "Tablas PMC (Excel)", "id": "1DlvAe0Q0NfayWplR4nP_obr7iU4t2P-z", "n": "TABLA NORMATIVA CHLC_COS CUS", "t": "Excel", "sz": 210337, "rel": "BMA", "pr": 2, "d": "Tabla normativa de coeficientes de Chacala-Las Cuevas.", "a": "COS y CUS por macrolote.", "x": "Complementa la tabla resumen.", "url": "https://drive.google.com/file/d/1DlvAe0Q0NfayWplR4nP_obr7iU4t2P-z/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "15WIvIHzMtvY5_HZKLVyLLQPvSFEqdC5a", "n": "TIRANTES IBER area total.asc", "t": "ASC", "sz": 732663515, "rel": "BBM", "pr": "—", "d": "Ráster de tirantes de inundación (modelo IBER).", "a": "Todo el CTS; 733 MB.", "x": "Modelación hidrológica; requiere QGIS. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/15WIvIHzMtvY5_HZKLVyLLQPvSFEqdC5a/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1PiSkaKOEhuW3vVgjSFrdOrIfjlR8Qmzf", "n": "TIRANTES IBER area total.asc.aux.xml", "t": "XML", "sz": 5001352, "rel": "BBM", "pr": "—", "d": "Metadatos del ráster de tirantes.", "a": "Archivo auxiliar.", "x": "Acompaña al ASC. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1PiSkaKOEhuW3vVgjSFrdOrIfjlR8Qmzf/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1i9tc4NsRceH6-131vdtqwV-gPyvQv9V7", "n": "EDIFICACIONES.gpkg", "t": "GPKG", "sz": 2183168, "rel": "BBM", "pr": "—", "d": "Capa de edificaciones existentes.", "a": "CTS.", "x": "Base para preexistencias. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1i9tc4NsRceH6-131vdtqwV-gPyvQv9V7/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1oV3dN2M8i1eDVA-qv4Aw-yPYm7Jk13LT", "n": "ZONIFICACIONES SECUNDARIAS.gpkg", "t": "GPKG", "sz": 3125248, "rel": "BBM", "pr": "—", "d": "Zonificación secundaria propuesta.", "a": "PTS.", "x": "Usos de suelo del PMC. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1oV3dN2M8i1eDVA-qv4Aw-yPYm7Jk13LT/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1svYkk8NMVXkVuonlIxGdj2bua_zlksSA", "n": "VOCACIONES.gpkg", "t": "GPKG", "sz": 1490944, "rel": "BBM", "pr": "—", "d": "Vocaciones generales de uso de suelo.", "a": "CTS, 14 vocaciones.", "x": "Base de la nota territorial. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1svYkk8NMVXkVuonlIxGdj2bua_zlksSA/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1qYZ3b51QwW-lj7ANQdXoEzzw3pXCzcRD", "n": "AREAS URBANIZABLES.gpkg", "t": "GPKG", "sz": 397312, "rel": "BBM", "pr": "—", "d": "Áreas urbanizables.", "a": "CTS.", "x": "Suelo con aptitud de desarrollo. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1qYZ3b51QwW-lj7ANQdXoEzzw3pXCzcRD/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1Hi1PVioNR58pi97vXfpK7elR13K1zMHZ", "n": "PARTIDO.gpkg", "t": "GPKG", "sz": 196608, "rel": "BBM", "pr": "—", "d": "Partido maestro de los PTS.", "a": "PTS.", "x": "Estructura conceptual del PMC. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1Hi1PVioNR58pi97vXfpK7elR13K1zMHZ/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1QaCkZCgy3ShD9KDHAEkJEpcBCHJwDy4k", "n": "SECTORES PTS.gpkg", "t": "GPKG", "sz": 409600, "rel": "BBM", "pr": "—", "d": "Sectores de los PTS.", "a": "16 sectores.", "x": "Unidades de planeación nivel 4. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1QaCkZCgy3ShD9KDHAEkJEpcBCHJwDy4k/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1u1tCLmyN1J-_IptZ_XhOnPvlHlvVb_rM", "n": "PROYECTOS DETONADORES ARQ.gpkg", "t": "GPKG", "sz": 180224, "rel": "BBM", "pr": "—", "d": "Ubicación de proyectos detonadores de arquitectura.", "a": "PTS.", "x": "Cruza con S3. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1u1tCLmyN1J-_IptZ_XhOnPvlHlvVb_rM/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1DuOnVjmhUlCkG65g1qaMY5V4IkC4nyuy", "n": "ESPACIO PUBLICO.gpkg", "t": "GPKG", "sz": 208896, "rel": "BBM", "pr": "—", "d": "Espacio público propuesto.", "a": "PTS.", "x": "Plazas, malecones, parques. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1DuOnVjmhUlCkG65g1qaMY5V4IkC4nyuy/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1a5ig9Eeo4IIp_w8trWFxi1Nb3T9Os-Tm", "n": "CTS COMPOSTELA.gpkg", "t": "GPKG", "sz": 159744, "rel": "BBM", "pr": "—", "d": "Polígono del CTS.", "a": "17.011,97 ha.", "x": "Límite oficial. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1a5ig9Eeo4IIp_w8trWFxi1Nb3T9Os-Tm/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1VciF9iWdDr-8ePLzFbcJ0ar-w9ArRse9", "n": "ADVC.gpkg", "t": "GPKG", "sz": 122880, "rel": "BBM", "pr": "—", "d": "Área Destinada Voluntariamente a la Conservación Jalcote.", "a": "PTS Chacala-Las Cuevas.", "x": "Restricción ambiental. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1VciF9iWdDr-8ePLzFbcJ0ar-w9ArRse9/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1gz0t6c1g_VMm1Emtki4Tj-3kaQuqmhP8", "n": "PROYECTOS DETONADORES ECOTURISMO.gpkg", "t": "GPKG", "sz": 188416, "rel": "BBM", "pr": "—", "d": "Ubicación de proyectos detonadores de ecoturismo.", "a": "PTS.", "x": "Cruza con S2 y S3. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1gz0t6c1g_VMm1Emtki4Tj-3kaQuqmhP8/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1ColrHvXIr_Gjbr-9RU1JX4m4tRxv6bXj", "n": "INEGI_Regiones_.gpkg", "t": "GPKG", "sz": 27529216, "rel": "BBM", "pr": "—", "d": "Regiones hidrológicas INEGI.", "a": "Regional.", "x": "Capa de referencia. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1ColrHvXIr_Gjbr-9RU1JX4m4tRxv6bXj/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1rF5uRN0i_gpgcS3u8Uk3P__JS5iyznVU", "n": "CURVAS DE NIVEL CTS.gpkg", "t": "GPKG", "sz": 8777728, "rel": "BBM", "pr": "—", "d": "Curvas de nivel.", "a": "CTS.", "x": "Topografía. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1rF5uRN0i_gpgcS3u8Uk3P__JS5iyznVU/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1YrNc3j9jPfs8Ibz_8W5NRUGP01Agn07A", "n": "INEGI_Subcuencas_.gpkg", "t": "GPKG", "sz": 89243648, "rel": "BBM", "pr": "—", "d": "Subcuencas INEGI.", "a": "Regional.", "x": "Capa de referencia. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1YrNc3j9jPfs8Ibz_8W5NRUGP01Agn07A/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1oNKHhKzCfh_c8zrbgXejl2SGRwS9fH5x", "n": "URBANIZACIÓN CTS.gpkg", "t": "GPKG", "sz": 9551872, "rel": "BBM", "pr": "—", "d": "Urbanización existente.", "a": "CTS.", "x": "Capa de referencia. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1oNKHhKzCfh_c8zrbgXejl2SGRwS9fH5x/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1mbNh3PnXIkIEAoOcyudjpiwyAxDtk3x8", "n": "PARCELAS CTS.gpkg", "t": "GPKG", "sz": 6914048, "rel": "BBM", "pr": "—", "d": "Parcelario.", "a": "CTS.", "x": "Base de tenencia, cruza con adquisición. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1mbNh3PnXIkIEAoOcyudjpiwyAxDtk3x8/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1Ek5ETcFvAlsPwqPPvHmVNuZcjfYJMiAS", "n": "TIRANTEZ VECTORIZADOS.gpkg", "t": "GPKG", "sz": 242651136, "rel": "BBM", "pr": "—", "d": "Tirantes de inundación vectorizados.", "a": "CTS; 243 MB.", "x": "Riesgo hidrológico. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1Ek5ETcFvAlsPwqPPvHmVNuZcjfYJMiAS/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1UE6oBRRxGinn2-mnFmY92y1Wnf-Rl0-T", "n": "CAMINOS CTS.gpkg", "t": "GPKG", "sz": 335872, "rel": "BBM", "pr": "—", "d": "Caminos existentes.", "a": "CTS.", "x": "Conectividad actual. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1UE6oBRRxGinn2-mnFmY92y1Wnf-Rl0-T/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1t23onksgIq4_vrhNo9LxiBFSKmcr0x5N", "n": "LOCALIDADES.gpkg", "t": "GPKG", "sz": 131072, "rel": "BBM", "pr": "—", "d": "Localidades INEGI.", "a": "CTS.", "x": "Asentamientos. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1t23onksgIq4_vrhNo9LxiBFSKmcr0x5N/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1AWzpbEfov5xZynrdiPvUwpKRdApJgr-t", "n": "CTS-COMPOSTELA copiar.gpkg", "t": "GPKG", "sz": 126976, "rel": "BBM", "pr": "—", "d": "Copia del polígono del CTS.", "a": "Duplicado.", "x": "Puede ignorarse. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1AWzpbEfov5xZynrdiPvUwpKRdApJgr-t/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1zqoBr49BpJN8z2bnycXVTFEu2fYR_VOA", "n": "CALLES CTS.gpkg", "t": "GPKG", "sz": 339968, "rel": "BBM", "pr": "—", "d": "Calles.", "a": "Localidades del CTS.", "x": "Vialidad urbana. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1zqoBr49BpJN8z2bnycXVTFEu2fYR_VOA/view"}, {"svc": "C", "grp": "Cartografía SIG (GPKG)", "id": "1nPYZiJd5eFaTXM4cOrokURyXeEIsZMY_", "n": "RH13.gpkg", "t": "GPKG", "sz": 315392, "rel": "BBM", "pr": "—", "d": "Región hidrológica 13.", "a": "Regional.", "x": "Capa de referencia. Requiere QGIS u otro SIG.", "url": "https://drive.google.com/file/d/1nPYZiJd5eFaTXM4cOrokURyXeEIsZMY_/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1xhdpL0-rg4MIU-by0nrA0XDymV2GRDDh", "n": "PROYECTOS_DETONADORES_INFRAESTRUCTURA.kmz", "t": "KMZ", "sz": 62313, "rel": "BMM", "pr": "—", "d": "Proyectos detonadores de infraestructura.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1xhdpL0-rg4MIU-by0nrA0XDymV2GRDDh/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1Z1eFKrrpcb-Vdam3iEtzKehfE5KqS8Tv", "n": "CONDICIONANTES RIESGOS.kmz", "t": "KMZ", "sz": 405992, "rel": "BMM", "pr": "—", "d": "Condicionantes de riesgo.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1Z1eFKrrpcb-Vdam3iEtzKehfE5KqS8Tv/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1ZOXWVfRS3MrlpQCXYzJ0Q-Tjwf5Ag6V3", "n": "PROYECTOS DETONADORES DE ECOTURISMO.kmz", "t": "KMZ", "sz": 29497, "rel": "BMM", "pr": "—", "d": "Proyectos detonadores de ecoturismo.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1ZOXWVfRS3MrlpQCXYzJ0Q-Tjwf5Ag6V3/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1QXoL3Wtpyz0-RxJNzDatTqk1I7Tw0JTO", "n": "ZONIFICACIÓN CHACALA GRISES.kmz", "t": "KMZ", "sz": 349901, "rel": "BMM", "pr": "—", "d": "Zonificación de Chacala en grises.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1QXoL3Wtpyz0-RxJNzDatTqk1I7Tw0JTO/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1Bq4q3WXrb37dpmVpwd9o28eaY80z8x9Y", "n": "SECTORES CH-LC.kmz", "t": "KMZ", "sz": 23041, "rel": "BMM", "pr": "—", "d": "Sectores de Chacala-Las Cuevas.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1Bq4q3WXrb37dpmVpwd9o28eaY80z8x9Y/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "13t3Zjg4H3m_Hlj0xf6M7avkt8OOHeAo7", "n": "VOCACIONES.kmz", "t": "KMZ", "sz": 731525, "rel": "BMM", "pr": "—", "d": "Vocaciones de uso de suelo.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/13t3Zjg4H3m_Hlj0xf6M7avkt8OOHeAo7/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1-g4m4tpSb0ciMwI3IHO6l2Mxb8RwRDNM", "n": "AREAS URBANIZABLES.kmz", "t": "KMZ", "sz": 116755, "rel": "BMM", "pr": "—", "d": "Áreas urbanizables.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1-g4m4tpSb0ciMwI3IHO6l2Mxb8RwRDNM/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1beDCdvLf565bGlSMUNq30vEew80rAR_y", "n": "ZONIFICACIÓN SECUNDARIA CHLC.kmz", "t": "KMZ", "sz": 360270, "rel": "BMM", "pr": "—", "d": "Zonificación secundaria de Chacala-Las Cuevas.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1beDCdvLf565bGlSMUNq30vEew80rAR_y/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1GMhCEMY8RqFZYS8XoNxuUPBCiX1R8WVU", "n": "SECTORES BDC.kmz", "t": "KMZ", "sz": 8617, "rel": "BMM", "pr": "—", "d": "Sectores de Boca de Chila.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1GMhCEMY8RqFZYS8XoNxuUPBCiX1R8WVU/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1zQwSBOBCk6BfsZGEDVTbykkSZqu-c8DS", "n": "ZONIFICACIÓN SECUNDARIA BDCH.kmz", "t": "KMZ", "sz": 278307, "rel": "BMM", "pr": "—", "d": "Zonificación secundaria de Boca de Chila.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1zQwSBOBCk6BfsZGEDVTbykkSZqu-c8DS/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1ER9t-iRE2GK0X1sajMAcVASqPJ_sqTVb", "n": "PROYECTOS DETONADORES DE ARQ..kmz", "t": "KMZ", "sz": 23273, "rel": "BMM", "pr": "—", "d": "Proyectos detonadores de arquitectura.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1ER9t-iRE2GK0X1sajMAcVASqPJ_sqTVb/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1GmUuvKS4mNVaiM5MQDM0IG1bSlTkXQIY", "n": "ZONIFICACIÓN SECUNDARIA CH-LC.kmz", "t": "KMZ", "sz": 355565, "rel": "BMM", "pr": "—", "d": "Zonificación secundaria de Chacala-Las Cuevas (variante).", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1GmUuvKS4mNVaiM5MQDM0IG1bSlTkXQIY/view"}, {"svc": "C", "grp": "Cartografía Google Earth (KMZ)", "id": "1Je87pVlfiLWhppbRIc-oo1Bd3PGqGYH-", "n": "PLAN MAESTRO HIDROLOGICO.kmz", "t": "KMZ", "sz": 11853, "rel": "BMM", "pr": "—", "d": "Plan maestro hidrológico.", "a": "Capa para Google Earth.", "x": "Consulta rápida sin SIG; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1Je87pVlfiLWhppbRIc-oo1Bd3PGqGYH-/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1BzqXg74V6H3aiAjmUT2xRLd2xcOjufQZ", "n": "XREF_TIRANTES VECTORIZADOS CTS.dwg", "t": "DWG", "sz": 130929605, "rel": "BBM", "pr": "—", "d": "Referencia externa de tirantes de inundación.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/1BzqXg74V6H3aiAjmUT2xRLd2xcOjufQZ/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1wj5_JL641vF8s2IoVIHpLaOol36SYX-1", "n": "XREF_TENENCIA USO.dwg", "t": "DWG", "sz": 3823999, "rel": "BBM", "pr": "—", "d": "Referencia externa de tenencia y uso.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/1wj5_JL641vF8s2IoVIHpLaOol36SYX-1/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1ly-90G7gyFzBUBqxSldmjeBW_f-NVReT", "n": "CURVAS CTS.dwg", "t": "DWG", "sz": 187244458, "rel": "BBM", "pr": "—", "d": "Curvas de nivel.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/1ly-90G7gyFzBUBqxSldmjeBW_f-NVReT/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1LqKD1s0VnRcIf_2CYdI_VAxSRJNlJQME", "n": "XREF TOPOGRAFÍA INEGI.dwg", "t": "DWG", "sz": 151773928, "rel": "BBM", "pr": "—", "d": "Topografía INEGI.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/1LqKD1s0VnRcIf_2CYdI_VAxSRJNlJQME/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "10MArUoLep1Gob00u2MtDpsxN8Ct9P-aP", "n": "18_PTS_INTENSIDAD CONSTRUCTIVA.dwg", "t": "DWG", "sz": 15046532, "rel": "BBM", "pr": "—", "d": "Intensidad constructiva de los PTS.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/10MArUoLep1Gob00u2MtDpsxN8Ct9P-aP/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1tHuiLgqzf9tTJs6VawaL8L7M6ZWMiD-q", "n": "11 12_PTS ZONIFICACIÓN MACROLOTES.dwg", "t": "DWG", "sz": 13925971, "rel": "BBM", "pr": "—", "d": "Zonificación por macrolotes.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/1tHuiLgqzf9tTJs6VawaL8L7M6ZWMiD-q/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1rDCcSD-Z3GVuE45900oeTlG15nkxHwck", "n": "6 7 8_PTS POLIGONAL Y SECTORES.dwg", "t": "DWG", "sz": 13469716, "rel": "BBM", "pr": "—", "d": "Poligonal y sectores de los PTS.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/1rDCcSD-Z3GVuE45900oeTlG15nkxHwck/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1GgbKARJatJNzRaZ0EUKDrciG9hd0_LM9", "n": "5_CTS VOCACIONES.dwg", "t": "DWG", "sz": 17723639, "rel": "BBM", "pr": "—", "d": "Vocaciones del CTS.", "a": "Planos CAD del PMC.", "x": "Requiere AutoCAD.", "url": "https://drive.google.com/file/d/1GgbKARJatJNzRaZ0EUKDrciG9hd0_LM9/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1OoLB_izO4rv57Fp6iyhLWtrmBB0N2e-z", "n": "INFRAESTRUCTURA PLUVIAL SUP.png", "t": "PNG", "sz": 3076401, "rel": "BBM", "pr": "—", "d": "Esquema de infraestructura pluvial superficial.", "a": "Planos CAD del PMC.", "x": "Imagen del Plan Maestro Hidrológico.", "url": "https://drive.google.com/file/d/1OoLB_izO4rv57Fp6iyhLWtrmBB0N2e-z/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "14som1Zov_vfzCoGL0BT1v64Vs7knxHEY", "n": "MEJORAMIENTO DE CAUSES.png", "t": "PNG", "sz": 3100899, "rel": "BBM", "pr": "—", "d": "Esquema de mejoramiento de cauces.", "a": "Planos CAD del PMC.", "x": "Imagen del Plan Maestro Hidrológico.", "url": "https://drive.google.com/file/d/14som1Zov_vfzCoGL0BT1v64Vs7knxHEY/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1f-3i9baZL9Q6lwh-ybqQi9o94k99eE12", "n": "RESERVORIO.png", "t": "PNG", "sz": 2384694, "rel": "BBM", "pr": "—", "d": "Esquema de reservorio.", "a": "Planos CAD del PMC.", "x": "Imagen del Plan Maestro Hidrológico.", "url": "https://drive.google.com/file/d/1f-3i9baZL9Q6lwh-ybqQi9o94k99eE12/view"}, {"svc": "C", "grp": "Cartografía CAD (DWG)", "id": "1EYSqRaTKEDIDFmjlqE-BI55TZH3MF6zA", "n": "CTB 01 - CC.ctb", "t": "CTB", "sz": 4500, "rel": "BBM", "pr": "—", "d": "Configuración de impresión de AutoCAD.", "a": "Planos CAD del PMC.", "x": "Archivo técnico sin contenido analítico.", "url": "https://drive.google.com/file/d/1EYSqRaTKEDIDFmjlqE-BI55TZH3MF6zA/view"}, {"svc": "C", "grp": "Documentación previa del PMC", "id": null, "n": "Conclusiones_Mercado", "t": "PDF", "sz": 0, "rel": "MAM", "pr": 1, "d": "Resumen de conclusiones preliminares del estudio de mercado (2 mar. 2026), 13 págs.", "a": "Versión preliminar del numeral 6.3 del PMC.", "x": "Documento previo del PMC.", "url": null}, {"svc": "C", "grp": "Documentación previa del PMC", "id": null, "n": "_Planteamiento_inicial 1 (PIPM)", "t": "PDF", "sz": 0, "rel": "MMA", "pr": 2, "d": "Planteamiento Inicial del Plan Maestro (3 mar. 2026), 77 págs.", "a": "Numeral 6.2 del PMC: hipótesis de desarrollo, vocación, zonificación preliminar y propuestas espaciales.", "x": "Documento previo del PMC.", "url": null}, {"svc": "C", "grp": "Documentación previa del PMC", "id": null, "n": "Zonas_funcionales 1 (informe de avance PMC)", "t": "PDF", "sz": 0, "rel": "MMM", "pr": 2, "d": "Informe de avance del PMC (3 feb. 2026), 43 págs.", "a": "Hipótesis regional, diagnóstico integral (urbano, social, riesgo, hidrología, ambiental, mercado, legal) y primera aproximación a los PTS.", "x": "Resume el avance del diagnóstico integral.", "url": null}, {"svc": "C", "grp": "Documentación previa del PMC", "id": null, "n": "CTS_CompostelaVF04", "t": "PDF", "sz": 0, "rel": "MMM", "pr": 2, "d": "Presentación VF04 del proyecto, 16 págs.", "a": "Antecedentes, marco de planeación, proyecto, propuesta de adquisición y viabilidad.", "x": "Presentación de referencia del proyecto.", "url": null}, {"svc": "S1", "grp": "Marco institucional", "id": "1o_54Yiq1uRaa4_T2fCJHy_uQANcXdAvL", "n": "2.1 Política y Procedimiento Creación CIP, PTI y CTS - MUS", "t": "PDF", "sz": 779750, "rel": "A-M", "pr": 2, "d": "Política 25 y procedimiento de creación de centros turísticos del Manual Único Sustantivo de FONATUR.", "a": "Definiciones de CIP, CTS, PTS y DTC; fases de evaluación, adquisición, planeación y ejecución; competencias por dirección.", "x": "Define qué es un CTS y los 16 criterios para su creación (plan maestro, MIA, comercialización, autenticidad sociocultural). Marco obligatorio para S1.", "url": "https://drive.google.com/file/d/1o_54Yiq1uRaa4_T2fCJHy_uQANcXdAvL/view"}, {"svc": "S1", "grp": "Marco institucional", "id": "1VuTzKtGkqOrfLeT11VLVFXVSUwMNkw5P", "n": "2.2 PI 2026-2030 FONATUR", "t": "PDF", "sz": 1284307, "rel": "ABB", "pr": 2, "d": "Programa Institucional 2026-2030 de FONATUR, 52 págs.", "a": "Diagnóstico sectorial, 2 objetivos, estrategias, líneas de acción e indicadores.", "x": "El CTS se alinea con el objetivo 1, estrategia 1.2 (destinos diversificados y sostenibles). Indicador: variación de la oferta de servicios turísticos (meta 3 % a 2030).", "url": "https://drive.google.com/file/d/1VuTzKtGkqOrfLeT11VLVFXVSUwMNkw5P/view"}, {"svc": "S1", "grp": "Marco institucional", "id": "12Y-C5TzqsiiFj-lI1SgQ_enA9VNKjXqR", "n": "2.3 Estrategia Misión, Visión, Valores Nuevo Fonatur", "t": "Word", "sz": 18637, "rel": "AM-", "pr": 3, "d": "Misión, visión y valores del Nuevo FONATUR.", "a": "Ejes inversión, innovación y acompañamiento; cronología de CIP y PTI.", "x": "Marco del cambio de enfoque del Nuevo FONATUR.", "url": "https://drive.google.com/file/d/12Y-C5TzqsiiFj-lI1SgQ_enA9VNKjXqR/view"}, {"svc": "S1", "grp": "Modelo de gestión «Dona»", "id": "1CjRVSEhEOx8Uo5RM_sZYVgvoRN_Xbx2F", "n": "Documento final CTS Compostela 29mayo", "t": "PDF", "sz": 7139230, "rel": "AAM", "pr": 1, "d": "Documento rector del modelo de desarrollo y gestión del CTS (mayo 2026), ≈90 págs.", "a": "Modelo Dona con 4 ejes, diagnóstico por eje, indicadores, oferta y demanda actuales, perfiles de visitante, modelos de inversión y asociación, caja de herramientas, ruta jurídica, OGD y fideicomiso.", "x": "Pieza central para S1 y base de la demanda para S2: 47 alojamientos DENUE, sin datos DATATUR; perfiles MICE boutique, wellness, nómadas digitales y escapadas nacionales.", "url": "https://drive.google.com/file/d/1CjRVSEhEOx8Uo5RM_sZYVgvoRN_Xbx2F/view"}, {"svc": "S1", "grp": "Modelo de gestión «Dona»", "id": "1jFZYhYX-giT4x6fnha6HdImp9tdjKBQ6", "n": "Dona-conceptual_diagnostico_vf", "t": "PDF", "sz": 1169790, "rel": "A--", "pr": 3, "d": "Diagramas de la Dona conceptual y de diagnóstico.", "a": "4 ejes: articulador del territorio, bienestar, sustentabilidad, turismo inteligente.", "x": "Material gráfico de apoyo al documento final.", "url": "https://drive.google.com/file/d/1jFZYhYX-giT4x6fnha6HdImp9tdjKBQ6/view"}, {"svc": "S1", "grp": "Modelo de gestión «Dona»", "id": "1Dn-ZZ4vN7XqrBDy4MWDW-Ur41F5sexvv", "n": "2026-05-29_Matriz de compatibilidades3", "t": "Excel", "sz": 90412, "rel": "A-M", "pr": 2, "d": "Matriz de compatibilidades entre instrumentos de la caja de herramientas.", "a": "Ventanilla única, gestión ambiental, banco de potencialidades, financiamiento e incentivos por tipo de actor.", "x": "Detalla los beneficios del contrato de adhesión con el OGD.", "url": "https://drive.google.com/file/d/1Dn-ZZ4vN7XqrBDy4MWDW-Ur41F5sexvv/view"}, {"svc": "S1", "grp": "Territorio y comunidades", "id": "1bzUFYJXlFmGTS6vy-WmxXuhMw_7uabfy", "n": "2.6 Concertación social CTS 131026", "t": "PowerPoint", "sz": 2371673, "rel": "A-M", "pr": 2, "d": "Avances de concertación social (13 oct. 2026).", "a": "Ejidos El Capomo, Zacualpan, Ixtapa y Las Varas.", "x": "7 reuniones, 94 anuencias RAN, 91 deslindes, sesión informativa en Chacala (27 jun.) y 4 reuniones de obras con CONAGUA.", "url": "https://drive.google.com/file/d/1bzUFYJXlFmGTS6vy-WmxXuhMw_7uabfy/view"}, {"svc": "S2", "grp": "Inventarios", "id": "1yssBfKIWmCLPJTyfPK7ktT9vjQ0Nm5hn", "n": "Hoteles y Airbnb Nayarit 2", "t": "Excel", "sz": 39202, "rel": "-AB", "pr": 3, "d": "Inventario de 200 hoteles y 150 anuncios de Airbnb en Bahía de Banderas, Compostela y San Blas.", "a": "Nombre, municipio, categoría, precio bajo y alto, URL.", "x": "Base de trabajo para el inventario de oferta; unos 23 registros en localidades del CTS.", "url": "https://drive.google.com/file/d/1yssBfKIWmCLPJTyfPK7ktT9vjQ0Nm5hn/view"}, {"svc": "S2", "grp": "Inventarios", "id": "1vH6Aw5k3nebLrlr1YJsiL1_mUjsF2q4W", "n": "Exp Turismo Comunitario_Nayarit", "t": "Excel", "sz": 10259, "rel": "-AB", "pr": 3, "d": "16 experiencias de turismo comunitario en Nayarit.", "a": "14 en Compostela (café, tabaco, Altavista, Chacala), 1 en Bahía de Banderas, 2 en San Blas.", "x": "Base del argumento «Compostela es el municipio con más ETC de Nayarit».", "url": "https://drive.google.com/file/d/1vH6Aw5k3nebLrlr1YJsiL1_mUjsF2q4W/view"}, {"svc": "S2", "grp": "Inventarios", "id": "1YXehLOXcd5cEopnrmJ0qllfoaStqA6Z9", "n": "Playas Identificadas en CIP Nayarit", "t": "Excel", "sz": 16017, "rel": "-AB", "pr": 3, "d": "65 playas identificadas en tres municipios.", "a": "24 en Compostela, 34 en Bahía de Banderas, 7 en San Blas.", "x": "Nombre y municipio de cada playa.", "url": "https://drive.google.com/file/d/1YXehLOXcd5cEopnrmJ0qllfoaStqA6Z9/view"}, {"svc": "S2", "grp": "Restricciones e identidad", "id": "16Z7jXrfpgnqpyIId-flMZ-5Gq-eq-62h", "n": "3.4 Restricciones ambientales", "t": "PDF", "sz": 200296, "rel": "-MM", "pr": 3, "d": "Nota de requisitos ambientales para tramitación (1 pág.).", "a": "MIA, cambio de uso de suelo forestal y concesión ZOFEMAT.", "x": "Orientado a la tramitación ambiental de los proyectos.", "url": "https://drive.google.com/file/d/16Z7jXrfpgnqpyIId-flMZ-5Gq-eq-62h/view"}, {"svc": "S2", "grp": "Restricciones e identidad", "id": "1V3TLdTzLT9RdvIZRay3NrY-Bu66ZEz1h", "n": "3.5 FONATUR_LINEAMIENTOS_BASICOS_DE_MARCA", "t": "PDF", "sz": 2179066, "rel": "-A-", "pr": 3, "d": "Manual básico de identidad institucional de FONATUR.", "a": "Logotipo, colores y aplicaciones.", "x": "El CTS no tiene marca registrada; nombre de trabajo «CTS Compostela». La presentación de octubre trae un boceto de marca destino.", "url": "https://drive.google.com/file/d/1V3TLdTzLT9RdvIZRay3NrY-Bu66ZEz1h/view"}, {"svc": "S3", "grp": "Suelo y adquisiciones", "id": "1pWb4r6skJDkyRotEC_x4Cza4tLZXezYw", "n": "4.2 Propuesta Adquisición Reserva Territorial_VF 170826", "t": "PDF", "sz": 2510038, "rel": "M-A", "pr": 1, "d": "Propuesta de adquisición de reserva territorial al Comité Técnico (ago. 2026), 25 págs.", "a": "845,32 ha: 428,42 en Boca de Chila y 416,90 en Chacala-Las Cuevas; 6 paquetes de prioridad.", "x": "Restricciones (ZOFEMAT, ANP Platanitos, ADVC Jalcote, UGA del POEL, NOM-022), avalúos INDAABIN de 59 a 9.045 MXN/m² y tenencia (541,52 ha parceladas, 171,14 de uso común).", "url": "https://drive.google.com/file/d/1pWb4r6skJDkyRotEC_x4Cza4tLZXezYw/view"}, {"svc": "S3", "grp": "Infraestructura (PMI)", "id": "1ReaCoiLt3i80tpeP4Vj-KQKjmuUkovmu", "n": "2.-PMI_FASE DE PLANEACIÓN IMPLEMENTACIÓN_OBRAS_01SEP26", "t": "PDF", "sz": 2695186, "rel": "B-A", "pr": 1, "d": "Plan Maestro de Infraestructura, Etapa de obra 01 (2026-2028).", "a": "Fichas de obra por PTS: vial, eléctrica, hidráulica, hídrica, sanitaria, urbanización y equipamiento turístico.", "x": "1.886 MDP: 1.205 en Boca de Chila y 681 en Chacala-Las Cuevas. Incluye 7 proyectos de equipamiento turístico (malecones, pabellón, plaza, senderos, Paseo Wixárika, parque humedal).", "url": "https://drive.google.com/file/d/1ReaCoiLt3i80tpeP4Vj-KQKjmuUkovmu/view"}, {"svc": "S3", "grp": "Infraestructura (PMI)", "id": "1AQzluneOdwGI2db8RZhblA9aixE_7aE6", "n": "Presentación PMI Septiembre 2026", "t": "PDF", "sz": 5479832, "rel": "BMA", "pr": 2, "d": "Presentación del PMI (sept. 2026).", "a": "Visión regional, sistema hídrico de los PTS y obras.", "x": "Versión resumida del PMI.", "url": "https://drive.google.com/file/d/1AQzluneOdwGI2db8RZhblA9aixE_7aE6/view"}, {"svc": "S3", "grp": "Infraestructura (PMI)", "id": "1Vlx4A3a39jZDzmugTXpxRbquV-yxDex8", "n": "Presentación Mayo 2026", "t": "PDF", "sz": 12960100, "rel": "B-M", "pr": 3, "d": "Avances de infraestructura presentados a DG (25 may. 2026).", "a": "Infraestructura fase 1: vialidades, urbanización de Chacala, suministro eléctrico y agua.", "x": "Versión anterior del PMI.", "url": "https://drive.google.com/file/d/1Vlx4A3a39jZDzmugTXpxRbquV-yxDex8/view"}, {"svc": "S3", "grp": "Infraestructura (PMI)", "id": "1_dri2KQPjNRTCgzpnyz4pUhT2M9FXZGv", "n": "Infraestructura CTS 07-10-2026", "t": "KMZ", "sz": 145710, "rel": "B-A", "pr": 3, "d": "Ubicación de la infraestructura del CTS (7 oct. 2026).", "a": "Pozos, tanques, subestaciones, PTAR y caminos.", "x": "Abrir en Google Earth.", "url": "https://drive.google.com/file/d/1_dri2KQPjNRTCgzpnyz4pUhT2M9FXZGv/view"}, {"svc": "S3", "grp": "Infraestructura (PMI)", "id": "1qUYryL_QDm3j05740hDvOHj8hsxdqyL_", "n": "ACAD 140826_PlantaGral_00_25_VA-Model", "t": "KMZ", "sz": 6451706, "rel": "B-A", "pr": 3, "d": "Trazo del proyecto carretero Las Varas-Platanitos (ago. 2026).", "a": "Planta general del km 1+000 al 25+912.", "x": "Eje estructurante del CTS; abrir en Google Earth.", "url": "https://drive.google.com/file/d/1qUYryL_QDm3j05740hDvOHj8hsxdqyL_/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1_esgzhiPf2jtwqMT2HgsB9nKxU3RXc2r", "n": "PPU_PUERTO_BOCA_CHILA", "t": "PDF", "sz": 16680365, "rel": "BBA", "pr": 3, "d": "Programa parcial del puerto de Boca de Chila.", "a": "Instrumento normativo vigente.", "x": "Referencia para la Marina de Boca de Chila. Consulta puntual.", "url": "https://drive.google.com/file/d/1_esgzhiPf2jtwqMT2HgsB9nKxU3RXc2r/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "10lQpEyO097W9p_069jhtG032BUWRtAV_", "n": "PPDUIMP Boca de Chila", "t": "PDF", "sz": 1604455, "rel": "BBA", "pr": 3, "d": "Plan parcial de desarrollo urbano de Boca de Chila.", "a": "Instrumento normativo vigente.", "x": "Instrumento vigente sobre el PTS Boca de Chila. Consulta puntual.", "url": "https://drive.google.com/file/d/10lQpEyO097W9p_069jhtG032BUWRtAV_/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1cJjSNAGum_Uhy3AINndSITdK19lQ6xfd", "n": "PDECP Chacala", "t": "PDF", "sz": 2147152, "rel": "BBA", "pr": 3, "d": "Plan de desarrollo del centro de población de Chacala.", "a": "Instrumento normativo vigente.", "x": "Instrumento vigente sobre el PTS Chacala-Las Cuevas. Consulta puntual.", "url": "https://drive.google.com/file/d/1cJjSNAGum_Uhy3AINndSITdK19lQ6xfd/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1jkWVgGsiKYlQvk6oM_eniPpo8KogBTsU", "n": "PMDU Compostela", "t": "PDF", "sz": 15023562, "rel": "BBA", "pr": 3, "d": "Plan Municipal de Desarrollo Urbano de Compostela (2017).", "a": "Instrumento normativo vigente.", "x": "Base normativa de capacidades (≈114.500 u en el CTS). Consulta puntual.", "url": "https://drive.google.com/file/d/1jkWVgGsiKYlQvk6oM_eniPpo8KogBTsU/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1rBj0nfH206HRvnPzYJLuo6WYXjB_b4Jt", "n": "PEOTDU Nayarit", "t": "PDF", "sz": 23522062, "rel": "BBM", "pr": "—", "d": "Programa estatal de ordenamiento territorial y desarrollo urbano.", "a": "Instrumento normativo vigente.", "x": "Marco estatal. Consulta puntual.", "url": "https://drive.google.com/file/d/1rBj0nfH206HRvnPzYJLuo6WYXjB_b4Jt/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1w_Bi8gjpoSfsKB5PnnY_SiNs2RF8Za4q", "n": "PDU Platanitos", "t": "PDF", "sz": 2497526, "rel": "BBM", "pr": "—", "d": "Plan de desarrollo urbano de Platanitos.", "a": "Instrumento normativo vigente.", "x": "DT Platanitos. Consulta puntual.", "url": "https://drive.google.com/file/d/1w_Bi8gjpoSfsKB5PnnY_SiNs2RF8Za4q/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1oK7fbkwgnN4vIEEvmEYbxEzTFjpkwzR2", "n": "DANP Playa Platanitos", "t": "PDF", "sz": 467711, "rel": "BBA", "pr": 3, "d": "Decreto del ANP Santuario Playa Platanitos (2024).", "a": "Instrumento normativo vigente.", "x": "Restricción ambiental colindante con Boca de Chila. Consulta puntual.", "url": "https://drive.google.com/file/d/1oK7fbkwgnN4vIEEvmEYbxEzTFjpkwzR2/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1hUxEgsvLYOAaasCSysqZWz-zJak_PDiA", "n": "PDUCP Las Varas", "t": "PDF", "sz": 5549772, "rel": "BBM", "pr": "—", "d": "Plan de desarrollo urbano del centro de población de Las Varas.", "a": "Instrumento normativo vigente.", "x": "LT Las Varas. Consulta puntual.", "url": "https://drive.google.com/file/d/1hUxEgsvLYOAaasCSysqZWz-zJak_PDiA/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1oZ5WmnIx7Qw1LEoMFWYX8xPRPk8_nG0C", "n": "PPDU Costa Canuva", "t": "PDF", "sz": 18763222, "rel": "BBM", "pr": "—", "d": "Plan parcial de Costa Canuva.", "a": "Instrumento normativo vigente.", "x": "Desarrollo fuera de los PTS. Consulta puntual.", "url": "https://drive.google.com/file/d/1oZ5WmnIx7Qw1LEoMFWYX8xPRPk8_nG0C/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "16lGySuIPeWNoCzt9PSHr3neNe7yeGdHT", "n": "PPDU Monteón", "t": "PDF", "sz": 12164237, "rel": "BBM", "pr": "—", "d": "Plan parcial de Monteón.", "a": "Instrumento normativo vigente.", "x": "Desarrollo fuera de los PTS. Consulta puntual.", "url": "https://drive.google.com/file/d/16lGySuIPeWNoCzt9PSHr3neNe7yeGdHT/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1YAILBW2dI4kAzRqbkoOULTrPJB3kYFI8", "n": "PPDU El Capomo", "t": "PDF", "sz": 7886925, "rel": "BBM", "pr": "—", "d": "Plan parcial de El Capomo.", "a": "Instrumento normativo vigente.", "x": "Desarrollo fuera de los PTS. Consulta puntual.", "url": "https://drive.google.com/file/d/1YAILBW2dI4kAzRqbkoOULTrPJB3kYFI8/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1GWkFT6icH6gAowVhDts30_rBp2ld_HMw", "n": "PPDUFSP Costa Dorada", "t": "PDF", "sz": 3486871, "rel": "BBM", "pr": "—", "d": "Plan parcial de Costa Dorada.", "a": "Instrumento normativo vigente.", "x": "Desarrollo fuera de los PTS. Consulta puntual.", "url": "https://drive.google.com/file/d/1GWkFT6icH6gAowVhDts30_rBp2ld_HMw/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "1V_vI1K7aZtQlbOnU2g5pml2Z3rn-tvoF", "n": "PPDUFSP La Nueva Esperanza", "t": "PDF", "sz": 3767365, "rel": "BBM", "pr": "—", "d": "Plan parcial de La Nueva Esperanza.", "a": "Instrumento normativo vigente.", "x": "Desarrollo fuera de los PTS. Consulta puntual.", "url": "https://drive.google.com/file/d/1V_vI1K7aZtQlbOnU2g5pml2Z3rn-tvoF/view"}, {"svc": "S3", "grp": "Ordenamiento vigente", "id": "18duS5v3X88R1vPRxONFtkHO5Azl1q7pl", "n": "PPDUFRCTP Xahala", "t": "PDF", "sz": 1736513, "rel": "BBM", "pr": "—", "d": "Plan parcial de Xahala.", "a": "Instrumento normativo vigente.", "x": "Desarrollo fuera de los PTS. Consulta puntual.", "url": "https://drive.google.com/file/d/18duS5v3X88R1vPRxONFtkHO5Azl1q7pl/view"}];
+const SVC = {
+  C:{code:"COMÚN",name:"Común a los tres servicios",k:"--c",kb:"--c-bg"},
+  S1:{code:"S1",name:"Estrategia turística del CTS",k:"--s1",kb:"--s1-bg"},
+  S2:{code:"S2",name:"Portafolio de producto y posicionamiento",k:"--s2",kb:"--s2-bg"},
+  S3:{code:"S3",name:"Proyectos turísticos estratégicos",k:"--s3",kb:"--s3-bg"}
+};
+const ORDER=["S1","S2","S3"];
+const LEADPREF=["S3","S1","S2"];
+const CARTO = new Set(["Cartografía SIG (GPKG)","Cartografía Google Earth (KMZ)","Cartografía CAD (DWG)","Láminas PMC"]);
+DOCS.forEach((d,i)=>{
+  d.i=i; d.r={S1:d.rel[0],S2:d.rel[1],S3:d.rel[2]};
+  d.svcs=ORDER.filter(k=>d.r[k]==="A"||d.r[k]==="M"||d.svc===k);
+  if(!d.svcs.length) d.svcs=[LEADPREF.find(k=>d.r[k]!=="-")||"S3"];
+  if(d.svc!=="C") d.lead=d.svc;
+  else if(d.rel==="AAA") d.lead="ALL";
+  else if(d.rel==="MMM") d.lead="COORD";
+  else { const rank={A:3,M:2,B:1,"-":0}; d.lead=[...LEADPREF].sort((a,b)=>rank[d.r[b]]-rank[d.r[a]])[0]; }
+  if(!d.svcs.includes(d.lead) && ORDER.includes(d.lead)) d.svcs.push(d.lead);
+  d.trans=d.svcs.length>1;
+});
+const LEADTXT={ALL:"Todo el equipo",COORD:"Dirección (coordinación)",S1:"S1",S2:"S2",S3:"S3"};
+const isMine=(d,k)=>d.lead===k||d.lead==="ALL"||(d.lead==="COORD"&&!d.trans);
+const css = n=>`var(${n})`;
+const mb = b => b? (b>=1e6? (b/1e6).toLocaleString("es-ES",{maximumFractionDigits:1})+" MB" : Math.max(1,Math.round(b/1e3))+" KB") : "";
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+let state={svc:"all",grp:null,q:"",pr:"all",trans:false,mine:false,carto:false,open:new Set()};
+try{const s=JSON.parse(localStorage.getItem("atlas-cts2")||"{}"); if(s.carto!==undefined)state.carto=s.carto;}catch(e){}
+document.getElementById("fcarto").checked=state.carto;
+function save(){try{localStorage.setItem("atlas-cts2",JSON.stringify({carto:state.carto}))}catch(e){}}
+
+/* ---------- tarjetas de servicio ---------- */
+const svcs=document.getElementById("svcs");
+ORDER.forEach(k=>{
+  const ds=DOCS.filter(d=>d.svcs.includes(k)), tv=ds.filter(d=>d.trans).length, mine=ds.filter(d=>isMine(d,k)).length;
+  const b=document.createElement("button");
+  b.className="svc"; b.type="button"; b.dataset.svc=k; b.setAttribute("aria-pressed","false");
+  b.style.setProperty("--k",css(SVC[k].k)); b.style.setProperty("--kb",css(SVC[k].kb));
+  b.innerHTML=`<span class="code">${SVC[k].code}</span><span class="name">${SVC[k].name}</span><span class="meta">${ds.length} documentos · ${tv} transversales</span><span class="meta">${mine} de lectura a cargo de ${k}</span>`;
+  b.onclick=()=>{setSvc(state.svc===k?"all":k,null); scrollTo("h-mat")};
+  svcs.appendChild(b);
+});
+{const tv=DOCS.filter(d=>d.trans);
+ const b=document.createElement("button"); b.className="svc tv"; b.type="button"; b.dataset.svc="TV"; b.setAttribute("aria-pressed","false");
+ b.style.setProperty("--k",css("--muted")); b.style.setProperty("--kb",css("--soft"));
+ const by=k=>tv.filter(d=>d.lead===k).length;
+ b.innerHTML=`<span class="code">TRANSVERSALES</span><span class="name">Documentos en varios servicios</span><span class="meta">${tv.length} documentos · una sola lectura</span><span class="meta">Equipo ${by("ALL")} · Dirección ${by("COORD")} · S1 ${by("S1")} · S2 ${by("S2")} · S3 ${by("S3")}</span>`;
+ b.onclick=()=>{state.trans=!state.trans; document.getElementById("ftrans").checked=state.trans; b.setAttribute("aria-pressed",String(state.trans)); render(); scrollTo("h-mat")};
+ svcs.appendChild(b);}
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
+
+/* ---------- mapa mental ---------- */
+const inSvc=(d,k)=>d.svcs.includes(k);
+const grpsOf=k=>{const own=[...new Set(DOCS.filter(d=>d.svc===k).map(d=>d.grp))], tv=[...new Set(DOCS.filter(d=>d.svc!==k&&inSvc(d,k)).map(d=>d.grp))];return [...own,...tv.filter(g=>!own.includes(g))]};
+const tree={id:"root",label:"CTS Compostela",sub:DOCS.length+" documentos",children:ORDER.map(k=>{
+  return {id:k,svc:k,label:SVC[k].code+" · "+SVC[k].name.split(" ").slice(0,2).join(" "),sub:DOCS.filter(d=>inSvc(d,k)).length+" docs",
+    children:grpsOf(k).map(g=>({id:k+"|"+g,svc:k,grp:g,label:g,sub:DOCS.filter(d=>inSvc(d,k)&&d.grp===g).length+"",
+      children:DOCS.filter(d=>inSvc(d,k)&&d.grp===g).map(d=>({id:k+"d"+d.i,svc:k,doc:d,label:(d.trans?"↔ ":"")+d.n}))}))};
+})};
+const expanded=new Set(["root","S1","S2","S3"]);
+const svg=document.getElementById("map");
+const NS="http://www.w3.org/2000/svg";
+const COLX=[0,170,380,640], ROW=26, PAD=14;
+function layout(){
+  let y=0; const nodes=[], links=[];
+  (function walk(n,depth,parent){
+    const kids=(expanded.has(n.id)&&n.children)?n.children:[];
+    let ny;
+    if(kids.length){const ys=kids.map(c=>walk(c,depth+1,n)); ny=(ys[0]+ys[ys.length-1])/2}
+    else{ny=y; y+=ROW}
+    nodes.push({n,depth,y:ny}); if(parent) links.push({p:parent,c:n});
+    n._y=ny; n._d=depth; return ny;
+  })(tree,0,null);
+  return {nodes,links,h:y};
+}
+function draw(){
+  const {nodes,links,h}=layout();
+  const W = expanded.size>5 && nodes.some(o=>o.depth===3) ? 1080 : 660;
+  svg.setAttribute("viewBox",`0 0 ${W} ${h+PAD*2}`);
+  svg.setAttribute("width",W); svg.setAttribute("height",h+PAD*2);
+  svg.innerHTML="";
+  const g=document.createElementNS(NS,"g"); g.setAttribute("transform",`translate(12,${PAD+ROW/2})`); svg.appendChild(g);
+  const nodeW = d=>[150,190,240,420][d];
+  links.forEach(({p,c})=>{
+    const x1=COLX[p._d]+nodeW(p._d), x2=COLX[c._d], y1=p._y, y2=c._y, mx=(x1+x2)/2;
+    const path=document.createElementNS(NS,"path");
+    path.setAttribute("d",`M${x1},${y1} C${mx},${y1} ${mx},${y2} ${x2},${y2}`);
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke",c.svc?css(SVC[c.svc].k):css("--line")); path.setAttribute("stroke-opacity",".55"); path.setAttribute("stroke-width",c._d===1?2:1.2);
+    g.appendChild(path);
+  });
+  nodes.forEach(({n,depth,y})=>{
+    const ng=document.createElementNS(NS,"g"); ng.setAttribute("class","node"); ng.setAttribute("tabindex","0");
+    ng.setAttribute("role","button");
+    ng.setAttribute("transform",`translate(${COLX[depth]},${y})`);
+    const k=n.svc?SVC[n.svc]:null, w=nodeW(depth);
+    const r=document.createElementNS(NS,"rect");
+    const hgt = depth===3?20:24;
+    r.setAttribute("x",0); r.setAttribute("y",-hgt/2); r.setAttribute("width",w); r.setAttribute("height",hgt); r.setAttribute("rx",depth===3?4:6);
+    const active = (n.svc && state.svc===n.svc && (depth===1? !state.grp : state.grp===n.grp));
+    if(depth===0){r.setAttribute("fill",css("--accent"))}
+    else if(depth===1){r.setAttribute("fill",css(k.k))}
+    else if(depth===2){r.setAttribute("fill",css(k.kb)); r.setAttribute("stroke",css(k.k)); r.setAttribute("stroke-width",active?2:1)}
+    else {r.setAttribute("fill",css("--surface")); r.setAttribute("stroke",n.doc.trans&&!isMine(n.doc,n.svc)?css("--muted"):css("--line")); if(n.doc.trans&&!isMine(n.doc,n.svc)) r.setAttribute("stroke-dasharray","3 3")}
+    if(depth===1&&active){r.setAttribute("stroke",css("--ink")); r.setAttribute("stroke-width",2)}
+    ng.appendChild(r);
+    const t=document.createElementNS(NS,"text");
+    t.setAttribute("x",8); t.setAttribute("y",4); t.setAttribute("font-size",depth===3?12:13);
+    if(depth<=1){t.style.fill="var(--surface)"; t.setAttribute("font-weight","600")}
+    if(depth===2) t.setAttribute("font-weight","600");
+    const maxc=[20,24,26,58][depth];
+    let lab=n.label; if(lab.length>maxc) lab=lab.slice(0,maxc-1)+"…";
+    t.textContent=lab; ng.appendChild(t);
+    if(n.sub && depth<3){
+      const s=document.createElementNS(NS,"text"); s.setAttribute("x",w-8); s.setAttribute("y",4); s.setAttribute("text-anchor","end");
+      s.setAttribute("font-size",11.5); s.style.fontFamily="var(--f-mono)";
+      s.style.fill = depth<=1?"var(--surface)":css(k.k); s.textContent = depth===0?n.sub:(depth===1?n.sub:n.sub);
+      if(depth===0){s.remove()} else ng.appendChild(s);
+    }
+    if(depth===3){
+      const d=n.doc;
+      if(d.pr===1){const c=document.createElementNS(NS,"circle"); c.setAttribute("cx",w-10); c.setAttribute("cy",0); c.setAttribute("r",4); c.setAttribute("fill",css("--accent")); ng.appendChild(c)}
+    }
+    if(depth===3 && n.doc.trans && !isMine(n.doc,n.svc)) t.style.fill="var(--muted)";
+    const tt=document.createElementNS(NS,"title"); tt.textContent=n.label+(n.doc?" — "+n.doc.d+(n.doc.trans?" Lectura: "+LEADTXT[n.doc.lead]+".":""):""); ng.appendChild(tt);
+    ng.setAttribute("aria-label",n.label);
+    const act=()=>clickNode(n,depth);
+    ng.addEventListener("click",act);
+    ng.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();act()}});
+    g.appendChild(ng);
+  });
+}
+function clickNode(n,depth){
+  if(depth===0){ setSvc("all",null); return }
+  if(depth===3){ focusDoc(n.doc,n.svc); return }
+  if(expanded.has(n.id) && !(depth===1 && state.svc!==n.svc) && !(depth===2 && state.grp!==n.grp)) expanded.delete(n.id); else expanded.add(n.id);
+  if(depth===1) setSvc(n.svc,null); else setSvc(n.svc,n.grp);
+}
+document.getElementById("expandAll").onclick=()=>{expanded.add("root");tree.children.forEach(s=>{expanded.add(s.id);s.children.forEach(g=>expanded.add(g.id))});draw()};
+document.getElementById("collapseAll").onclick=()=>{expanded.clear();["root","S1","S2","S3"].forEach(x=>expanded.add(x));draw()};
+
+/* ---------- matriz ---------- */
+const tb=document.getElementById("tb");
+function setSvc(s,g){
+  state.svc=s; state.grp=g;
+  document.getElementById("fsvc").value=s;
+  if(g && CARTO.has(g) && !state.carto){state.carto=true; document.getElementById("fcarto").checked=true; save()}
+  document.querySelectorAll('.svc:not([data-svc="TV"])').forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.svc===s)));
+  draw(); render();
+}
+function matches(d){
+  if(state.q){const q=state.q.toLowerCase(); if(!(d.n+" "+d.d+" "+d.a+" "+d.x+" "+d.grp).toLowerCase().includes(q)) return false}
+  if(state.pr==="1" && d.pr!==1) return false;
+  if(state.pr==="12" && !(d.pr===1||d.pr===2)) return false;
+  if(!state.carto && CARTO.has(d.grp) && !(state.grp && state.grp===d.grp)) return false;
+  if(state.trans && !d.trans) return false;
+  return true;
+}
+function relCell(d){
+  return `<div class="rel">${["S1","S2","S3"].map(k=>{const v=d.r[k]; const cls=v==="-"?"n":v;
+    return `<span class="r ${cls}" style="--k:${css(SVC[k].k)};--kb:${css(SVC[k].kb)}" title="${k}: ${({A:"alta",M:"media",B:"baja","-":"sin aporte"})[v]}">${v==="-"?"·":v}</span>`}).join("")}</div>`;
+}
+function link(d){
+  return d.url? `<a class="open" href="${esc(d.url)}" target="_blank" rel="noopener">Abrir ↗</a>` : `<span class="proj">Sin enlace</span>`;
+}
+function render(){
+  let html="", n=0;
+  const showSvcs = state.svc==="all"?ORDER:[state.svc];
+  showSvcs.forEach(k=>{
+    let own = DOCS.filter(d=>inSvc(d,k) && matches(d) && (!state.grp || d.grp===state.grp) && (!state.mine || isMine(d,k)));
+    if(!own.length) return;
+    const st=`--k:${css(SVC[k].k)};--kb:${css(SVC[k].kb)}`;
+    html+=`<tr class="svcrow" style="${st}"><td colspan="6">${SVC[k].code} · ${SVC[k].name}</td></tr>`;
+    const groups=grpsOf(k).filter(g=>own.some(d=>d.grp===g));
+    groups.forEach(g=>{
+      const ds=own.filter(d=>d.grp===g);
+      html+=`<tr class="grprow"><td colspan="6"><button type="button" data-grp="${esc(k+"|"+g)}">${esc(g)} · ${ds.length}</button></td></tr>`;
+      ds.forEach(d=>{html+=row(d,st,k);n++});
+    });
+  });
+  tb.innerHTML = html || `<tr><td colspan="6" class="empty">Ningún documento coincide con los filtros. Prueba a borrar la búsqueda o a mostrar la cartografía.</td></tr>`;
+  document.getElementById("count").textContent = `${n} filas · ${DOCS.length} documentos únicos`;
+  tb.querySelectorAll("tr.doc").forEach(tr=>tr.addEventListener("click",e=>{
+    if(e.target.closest("a")) return; const key=tr.dataset.key; state.open.has(key)?state.open.delete(key):state.open.add(key); render();
+    const el=tb.querySelector(`tr.doc[data-key="${key}"]`); if(el) el.focus({preventScroll:true});
+  }));
+  tb.querySelectorAll("tr.doc").forEach(tr=>tr.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.target.closest("a")){e.preventDefault();tr.click()}}));
+  tb.querySelectorAll("tr.grprow button").forEach(b=>b.onclick=()=>{const [k,g]=b.dataset.grp.split("|"); expanded.add(k); expanded.add(b.dataset.grp); setSvc(k,state.grp===g?null:g)});
+}
+function row(d,st,k){
+  const key=k+"-"+d.i, mine=isMine(d,k);
+  const origin = d.svc==="C"?"Carpeta común":"Carpeta "+d.svc;
+  const who = !d.trans ? `<span class="own">Lee ${k}</span>`
+    : mine ? `<span class="tr">Transversal</span><span class="own">${d.lead==="ALL"?"Lee todo el equipo":"Lee "+k}</span>`
+    : `<span class="tr">Transversal</span><span class="ref">Lee ${LEADTXT[d.lead]}; aquí solo consulta</span>`;
+  const also = d.trans ? " · también en "+d.svcs.filter(x=>x!==k).join(", ") : "";
+  let h=`<tr class="doc${d.trans&&!mine?" ref":""}" tabindex="0" data-key="${key}" data-i="${d.i}" style="${st}" aria-expanded="${state.open.has(key)}">
+    <td><div class="dname">${esc(d.n)}</div><div class="dtype">${esc(d.t)}${d.sz?" · "+mb(d.sz):""} · ${origin}${also}</div></td>
+    <td>${esc(d.d)}</td><td>${esc(d.a)}</td><td>${relCell(d)}</td>
+    <td><div class="who">${d.pr==="—"?"":`<span class="pr p${d.pr}">Prioridad ${d.pr}</span>`}${who}</div></td><td>${link(d)}</td></tr>`;
+  if(state.open.has(key)) h+=`<tr class="detail"><td colspan="6"><span class="lbl">Detalle y observaciones</span>${esc(d.x)}</td></tr>`;
+  return h;
+}
+function focusDoc(d,k){
+  if(state.svc!=="all" && state.svc!==k) state.svc=k;
+  if(state.grp && state.grp!==d.grp) state.grp=null;
+  state.trans=false; state.mine=false; document.getElementById("ftrans").checked=false; document.getElementById("fmine").checked=false;
+  if(CARTO.has(d.grp)){state.carto=true;document.getElementById("fcarto").checked=true}
+  state.q=""; document.getElementById("q").value=""; state.pr="all"; document.getElementById("fpr").value="all";
+  const key=k+"-"+d.i; state.open.add(key); setSvc(state.svc,state.grp);
+  const el=tb.querySelector(`tr.doc[data-key="${key}"]`);
+  if(el){el.scrollIntoView({behavior:"auto",block:"center"}); el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),1400); el.focus({preventScroll:true})}
+}
+document.getElementById("q").addEventListener("input",e=>{state.q=e.target.value.trim();render()});
+document.getElementById("fsvc").addEventListener("change",e=>setSvc(e.target.value,null));
+document.getElementById("fpr").addEventListener("change",e=>{state.pr=e.target.value;render()});
+document.getElementById("ftrans").addEventListener("change",e=>{state.trans=e.target.checked;document.querySelector('.svc[data-svc="TV"]').setAttribute("aria-pressed",String(state.trans));render()});
+document.getElementById("fmine").addEventListener("change",e=>{state.mine=e.target.checked;render()});
+document.getElementById("fcarto").addEventListener("change",e=>{state.carto=e.target.checked;save();render()});
+const ro=new MutationObserver(()=>draw()); ro.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+draw(); render();
+</script>
+
+</body>
+</html>
