@@ -171,10 +171,13 @@ tr.doc.ref .dname{font-weight:500;color:var(--muted)}
       <select id="fpr" aria-label="Prioridad de lectura">
         <option value="all">Cualquier prioridad</option>
         <option value="1">Prioridad 1</option>
-        <option value="12">Prioridad 1 y 2</option>
+        <option value="2">Prioridad 2</option>
+        <option value="3">Prioridad 3</option>
+        <option value="12">Prioridades 1 y 2</option>
+        <option value="none">Sin prioridad (consulta a demanda)</option>
       </select>
-      <label><input type="checkbox" id="ftrans"> Solo transversales</label><label><input type="checkbox" id="fmine"> Solo los que lee este servicio</label>
-      <label><input type="checkbox" id="fcarto"> Mostrar cartografía SIG/CAD</label>
+      <label title="Muestra solo los documentos que aparecen en más de un servicio."><input type="checkbox" id="ftrans"> Solo transversales</label><label title="Oculta los transversales que lee otro servicio: queda la lista de lectura propia de cada servicio."><input type="checkbox" id="fmine"> Solo lista de lectura de cada servicio</label>
+      <label title="Añade los 61 archivos técnicos de cartografía y planos (GPKG, KMZ, DWG y láminas del PMC), ocultos por defecto."><input type="checkbox" id="fcarto"> Incluir cartografía y planos</label>
     </div>
     <div class="tablebox">
       <table>
@@ -341,8 +344,9 @@ function setSvc(s,g){
 }
 function matches(d){
   if(state.q){const q=state.q.toLowerCase(); if(!(d.n+" "+d.d+" "+d.a+" "+d.x+" "+d.grp).toLowerCase().includes(q)) return false}
-  if(state.pr==="1" && d.pr!==1) return false;
+  if(["1","2","3"].includes(state.pr) && d.pr!==+state.pr) return false;
   if(state.pr==="12" && !(d.pr===1||d.pr===2)) return false;
+  if(state.pr==="none" && d.pr!=="—") return false;
   if(!state.carto && CARTO.has(d.grp) && !(state.grp && state.grp===d.grp)) return false;
   if(state.trans && !d.trans) return false;
   return true;
