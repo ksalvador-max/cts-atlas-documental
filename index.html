@@ -100,6 +100,15 @@ tr.detail .lbl{font-family:var(--f-mono);font-size:11px;text-transform:uppercase
 .who .own{font-size:12.5px;font-weight:600;color:var(--k)}
 .who .ref{font-size:12.5px;color:var(--muted)}
 tr.doc.ref .dname{font-weight:500;color:var(--muted)}
+.legend .lgh{font-family:var(--f-mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink);margin-left:6px}
+.legend .lgh:first-child{margin-left:0}
+.legend{padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;gap:10px 14px}
+.legend>span{gap:6px}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:-12px}
+.tabs button{font:inherit;font-family:var(--f-display);font-stretch:85%;font-weight:700;font-size:17px;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 14px;color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tabs button:hover{color:var(--ink)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 @media (prefers-reduced-motion:no-preference){tr.doc.flash td{transition:background .8s}}
 </style>
@@ -115,7 +124,26 @@ tr.doc.ref .dname{font-weight:500;color:var(--muted)}
 
   <div class="svcs" id="svcs"></div>
 
-  <section aria-labelledby="h-map">
+  <div class="legend" aria-label="Leyenda">
+    <span class="lgh">Relevancia</span>
+    <span><span class="r A" style="--k:var(--ink);--kb:var(--soft)">A</span>alta</span>
+    <span><span class="r M" style="--k:var(--ink);--kb:var(--soft)">M</span>media</span>
+    <span><span class="r B">B</span>baja</span>
+    <span class="lgh">Lectura</span>
+    <span><span class="pr p1">Prioridad 1</span><span class="pr p2">Prioridad 2</span><span class="pr">Prioridad 3</span></span>
+    <span><span class="tr">Transversal</span>en varios servicios, con una sola lectura asignada</span>
+    <span class="lgh">Mapa</span>
+    <span><svg width="18" height="12" aria-hidden="true"><circle cx="9" cy="6" r="4" fill="var(--accent)"/></svg>prioridad 1</span>
+    <span>↔ transversal</span>
+    <span><svg width="26" height="14" aria-hidden="true"><rect x="1" y="1" width="24" height="12" rx="3" fill="none" stroke="var(--muted)" stroke-dasharray="3 3"/></svg>solo consulta en ese servicio</span>
+  </div>
+
+  <div class="tabs" role="tablist" aria-label="Vista">
+    <button type="button" role="tab" id="tab-mapa" aria-controls="panel-mapa" aria-selected="true">Mapa mental</button>
+    <button type="button" role="tab" id="tab-matriz" aria-controls="panel-matriz" aria-selected="false">Matriz de documentos</button>
+  </div>
+
+  <section id="panel-mapa" role="tabpanel" aria-labelledby="tab-mapa">
     <div class="sechead">
       <h2 id="h-map">Mapa mental</h2>
       <div class="controls">
@@ -123,11 +151,11 @@ tr.doc.ref .dname{font-weight:500;color:var(--muted)}
         <button class="btn" id="collapseAll" type="button">Plegar</button>
       </div>
     </div>
-    <div class="hint">Pulsa un servicio o un grupo para desplegarlo y filtrar la matriz; pulsa un documento para ver su ficha.</div>
+    <div class="hint">Pulsa un servicio o un grupo para desplegarlo; pulsa un documento para abrir su ficha en la matriz. Las cajas de servicio y de transversales también filtran el mapa.</div>
     <div class="mapbox"><svg id="map" role="img" aria-label="Mapa mental de la documentación por servicio"></svg></div>
   </section>
 
-  <section aria-labelledby="h-mat">
+  <section id="panel-matriz" role="tabpanel" aria-labelledby="tab-matriz" hidden>
     <div class="sechead">
       <h2 id="h-mat">Matriz de documentos</h2>
       <span class="count" id="count"></span>
@@ -147,13 +175,6 @@ tr.doc.ref .dname{font-weight:500;color:var(--muted)}
       </select>
       <label><input type="checkbox" id="ftrans"> Solo transversales</label><label><input type="checkbox" id="fmine"> Solo los que lee este servicio</label>
       <label><input type="checkbox" id="fcarto"> Mostrar cartografía SIG/CAD</label>
-    </div>
-    <div class="legend">
-      <span>Relevancia por servicio:</span>
-      <span><span class="r A" style="--k:var(--ink);--kb:var(--soft)">A</span>alta</span>
-      <span><span class="r M" style="--k:var(--ink);--kb:var(--soft)">M</span>media</span>
-      <span><span class="r B">B</span>baja</span>
-      <span><span class="pr p1">1</span>prioridad de lectura</span><span><span class="tr">Transversal</span>aparece en varios servicios; la etiqueta indica quién lo lee</span>
     </div>
     <div class="tablebox">
       <table>
@@ -205,7 +226,7 @@ ORDER.forEach(k=>{
   b.className="svc"; b.type="button"; b.dataset.svc=k; b.setAttribute("aria-pressed","false");
   b.style.setProperty("--k",css(SVC[k].k)); b.style.setProperty("--kb",css(SVC[k].kb));
   b.innerHTML=`<span class="code">${SVC[k].code}</span><span class="name">${SVC[k].name}</span><span class="meta">${ds.length} documentos · ${tv} transversales</span><span class="meta">${mine} de lectura a cargo de ${k}</span>`;
-  b.onclick=()=>{setSvc(state.svc===k?"all":k,null); scrollTo("h-mat")};
+  b.onclick=()=>{const s=state.svc===k?"all":k; if(s!=="all") expanded.add(k); setSvc(s,null)};
   svcs.appendChild(b);
 });
 {const tv=DOCS.filter(d=>d.trans);
@@ -213,9 +234,8 @@ ORDER.forEach(k=>{
  b.style.setProperty("--k",css("--muted")); b.style.setProperty("--kb",css("--soft"));
  const by=k=>tv.filter(d=>d.lead===k).length;
  b.innerHTML=`<span class="code">TRANSVERSALES</span><span class="name">Documentos en varios servicios</span><span class="meta">${tv.length} documentos · una sola lectura</span><span class="meta">Equipo ${by("ALL")} · Dirección ${by("COORD")} · S1 ${by("S1")} · S2 ${by("S2")} · S3 ${by("S3")}</span>`;
- b.onclick=()=>{state.trans=!state.trans; document.getElementById("ftrans").checked=state.trans; b.setAttribute("aria-pressed",String(state.trans)); render(); scrollTo("h-mat")};
+ b.onclick=()=>{state.trans=!state.trans; document.getElementById("ftrans").checked=state.trans; b.setAttribute("aria-pressed",String(state.trans)); draw(); render()};
  svcs.appendChild(b);}
-function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})}
 
 /* ---------- mapa mental ---------- */
 const inSvc=(d,k)=>d.svcs.includes(k);
@@ -232,7 +252,10 @@ const COLX=[0,170,380,640], ROW=26, PAD=14;
 function layout(){
   let y=0; const nodes=[], links=[];
   (function walk(n,depth,parent){
-    const kids=(expanded.has(n.id)&&n.children)?n.children:[];
+    let kids=(expanded.has(n.id)&&n.children)?n.children:[];
+    if(depth===0 && state.svc!=="all") kids=kids.filter(c=>c.svc===state.svc);
+    if(depth===1 && state.trans) kids=kids.filter(g=>g.children.some(l=>l.doc.trans));
+    if(depth===2 && state.trans) kids=kids.filter(l=>l.doc.trans);
     let ny;
     if(kids.length){const ys=kids.map(c=>walk(c,depth+1,n)); ny=(ys[0]+ys[ys.length-1])/2}
     else{ny=y; y+=ROW}
@@ -300,7 +323,7 @@ function draw(){
 }
 function clickNode(n,depth){
   if(depth===0){ setSvc("all",null); return }
-  if(depth===3){ focusDoc(n.doc,n.svc); return }
+  if(depth===3){ showTab("matriz"); focusDoc(n.doc,n.svc); return }
   if(expanded.has(n.id) && !(depth===1 && state.svc!==n.svc) && !(depth===2 && state.grp!==n.grp)) expanded.delete(n.id); else expanded.add(n.id);
   if(depth===1) setSvc(n.svc,null); else setSvc(n.svc,n.grp);
 }
@@ -386,6 +409,22 @@ document.getElementById("ftrans").addEventListener("change",e=>{state.trans=e.ta
 document.getElementById("fmine").addEventListener("change",e=>{state.mine=e.target.checked;render()});
 document.getElementById("fcarto").addEventListener("change",e=>{state.carto=e.target.checked;save();render()});
 const ro=new MutationObserver(()=>draw()); ro.observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});
+function showTab(name,remember=true){
+  const m=name==="matriz";
+  document.getElementById("panel-mapa").hidden=m; document.getElementById("panel-matriz").hidden=!m;
+  document.getElementById("tab-mapa").setAttribute("aria-selected",String(!m));
+  document.getElementById("tab-matriz").setAttribute("aria-selected",String(m));
+  document.getElementById("tab-mapa").tabIndex=m?-1:0; document.getElementById("tab-matriz").tabIndex=m?0:-1;
+  if(remember){try{localStorage.setItem("atlas-cts-tab",name)}catch(e){} try{history.replaceState(null,"","#"+name)}catch(e){}}
+}
+document.getElementById("tab-mapa").onclick=()=>showTab("mapa");
+document.getElementById("tab-matriz").onclick=()=>showTab("matriz");
+document.querySelector(".tabs").addEventListener("keydown",e=>{
+  if(e.key==="ArrowRight"||e.key==="ArrowLeft"){const cur=document.getElementById("panel-matriz").hidden?"mapa":"matriz", nx=cur==="mapa"?"matriz":"mapa"; showTab(nx); document.getElementById("tab-"+nx).focus()}
+});
+let startTab="mapa"; try{startTab=localStorage.getItem("atlas-cts-tab")||"mapa"}catch(e){}
+if(location.hash==="#matriz"||location.hash==="#mapa") startTab=location.hash.slice(1);
+showTab(startTab,false);
 draw(); render();
 </script>
 
